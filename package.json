@@ -1,0 +1,12 @@
+{
+  "name": "surify",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parse": "^4.3.4",
+    "meow": "^5.0.0"
+  },
+  "preferGlobal": true,
+  "bin": "./main.js"
+}

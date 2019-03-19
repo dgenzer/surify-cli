@@ -1,0 +1,9 @@
+{
+    "template": {
+        "suricata": {
+            "path": "./suricata.template",
+            "startVar": "{{",
+            "endVar": "}}"
+        }
+    }
+}
