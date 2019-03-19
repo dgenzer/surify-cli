@@ -5,6 +5,9 @@ const meow = require("meow");
 const surify = require("./surify.js");
 const fs = require("fs");
 const parse = require("csv-parse");
+const readline = require("readline");
+
+let stdin = "";
 
 const main = async () => {
   try {
@@ -22,26 +25,46 @@ Set with flag -c [file]
   }
 
   let vars = [];
-  if (cli.flags.json) {
-    try {
-      vars = JSON.parse(fs.readFileSync(cli.flags.json));
-    } catch (e) {
-      console.error(`
+  if (cli.flags.hasOwnProperty("json")) {
+    if (cli.flags.json !== true) {
+      try {
+        vars = JSON.parse(fs.readFileSync(cli.flags.json));
+      } catch (e) {
+        console.error(`
 File ${cli.flags.json} is not a valid JSON.
       `);
+      }
+    } else {
+      try {
+        vars = JSON.parse(stdin);
+      } catch (e) {
+        console.error(`
+STDIN is not a valid JSON.
+      `);
+      }
     }
-  } else if (cli.flags.jsonl) {
-    let buffer = await fs.readFileSync(cli.flags.jsonl);
-    let data = await Buffer.from(buffer)
-      .toString()
-      .split("\n");
-
+  } else if (cli.flags.hasOwnProperty("jsonl")) {
+    let data;
+    if (cli.flags.jsonl !== true) {
+      let buffer = await fs.readFileSync(cli.flags.jsonl);
+      data = await Buffer.from(buffer)
+        .toString()
+        .split("\n");
+    } else {
+      data = stdin.split("\n");
+    }
     for (let d of data) {
       if (d.length > 0) {
         vars.push(JSON.parse(d));
       }
     }
-  } else if (cli.flags.csv) {
+  } else if (cli.flags.hasOwnProperty("csv")) {
+    if(stdin.length > 0)  {
+      console.error(`
+STDIN is recently for JSON (--json) / JSON Lines (--jsonl).
+      `);
+      process.exit();
+    } 
     parse(
       fs.readFileSync(cli.flags.csv),
       { delimiter: cli.flags.delimiter },
@@ -60,6 +83,8 @@ File ${cli.flags.json} is not a valid JSON.
   } else {
     vars = cli.flags;
   }
+
+  console.log(cli.flags);
 
   let rules = await surify.readTemplate("suricata");
   let newRules = surify.setVars(rules, vars, cli.flags.sid);
@@ -131,4 +156,21 @@ $ surify c config.json --csv example.csv -d ";" -o suri_csv.rules --sid 1
   }
 );
 
-main();
+if (process.stdin.isTTY) {
+  main();
+} else {
+  let rl = readline.createInterface({
+    input: process.stdin
+  });
+
+  rl.on("line", function(cmd) {
+    stdin += cmd + "\n";
+  });
+
+  rl.on("close", () => {
+    stdin = stdin.slice(0, stdin.length - 1);
+    main().then(() => {
+      process.exit();
+    });
+  });
+}
