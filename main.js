@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
 const meow = require("meow");
 const surify = require("./surify.js");
@@ -30,6 +30,17 @@ Set with flag -c [file]
 File ${cli.flags.json} is not a valid JSON.
       `);
     }
+  } else if (cli.flags.jsonl) {
+    let buffer = await fs.readFileSync(cli.flags.jsonl);
+    let data = await Buffer.from(buffer)
+      .toString()
+      .split("\n");
+
+    for (let d of data) {
+      if (d.length > 0) {
+        vars.push(JSON.parse(d));
+      }
+    }
   } else if (cli.flags.csv) {
     parse(
       fs.readFileSync(cli.flags.csv),
@@ -53,7 +64,6 @@ File ${cli.flags.json} is not a valid JSON.
   let rules = await surify.readTemplate("suricata");
   let newRules = surify.setVars(rules, vars, cli.flags.sid);
 
-
   if (cli.flags.output.toLowerCase() === "log") {
     console.log(newRules.rules.join("\n"));
   } else {
@@ -61,19 +71,21 @@ File ${cli.flags.json} is not a valid JSON.
   }
 };
 
-const cli = meow(`usage: 
-$ surify -c config.json [FLAGS]
+const cli = meow(
+  `usage: 
+$ surify -c config.json [OPTIONS]
 
-FLAGS
-=====
+OPTIONS
+=======
 -v, --version           show package version
--c, --config [file]     set config file
--o, --output [file]     set output file
+-c, --config <file>     set config file
+-o, --output <file>     set output file
              log        write to stdout
---json [file]           parse JSON-file
---csv [file]            parse CSV-file
+--json <file>           parse JSON-file
+--jsonl <file>          parse JSONL-file
+--csv <file>            parse CSV-file
     -d, --delimiter     delimiter in CSV-file
---sid [number]          set the first SID for the generated ruleset
+--sid <number>          set the first SID for the generated ruleset
 
 
 EXAMPLES
@@ -85,36 +97,38 @@ $ surify -c config.json --json example.json -o suri.rules
 
 $ surify c config.json --csv example.csv -d ";" -o suri_csv.rules --sid 1
 
-`, {
-  flags: {
-    version: {
-      alias: "v",
-      type: "boolean"
-    },
-    config: {
-      alias: "c",
-      type: "string",
-      default: "config.json"
-    },
-    output: {
-      alias: "o",
-      type: "string",
-      default: "suricata.rules"
-    },
-    json: {
-      type: "string"
-    },
-    csv: {
-      type: "string"
-    },
-    delimiter: {
-      alias: "d",
-      type: "string"
-    },
-    sid: {
-      type: "string"
+`,
+  {
+    flags: {
+      version: {
+        alias: "v",
+        type: "boolean"
+      },
+      config: {
+        alias: "c",
+        type: "string",
+        default: "config.json"
+      },
+      output: {
+        alias: "o",
+        type: "string",
+        default: "suricata.rules"
+      },
+      json: {
+        type: "string"
+      },
+      csv: {
+        type: "string"
+      },
+      delimiter: {
+        alias: "d",
+        type: "string"
+      },
+      sid: {
+        type: "string"
+      }
     }
   }
-});
+);
 
 main();
