@@ -18,8 +18,8 @@ const main = async () => {
       console.error(`
 No configuration file! 
 
-Set with flag -c [file] 
-           or --config [file]
+Set with flag -c <file>
+           or --config <file>
       `);
     }
   }
@@ -59,12 +59,12 @@ STDIN is not a valid JSON.
       }
     }
   } else if (cli.flags.hasOwnProperty("csv")) {
-    if(stdin.length > 0)  {
+    if (stdin.length > 0) {
       console.error(`
 STDIN is recently for JSON (--json) / JSON Lines (--jsonl).
       `);
       process.exit();
-    } 
+    }
     parse(
       fs.readFileSync(cli.flags.csv),
       { delimiter: cli.flags.delimiter },
@@ -84,15 +84,17 @@ STDIN is recently for JSON (--json) / JSON Lines (--jsonl).
     vars = cli.flags;
   }
 
-  console.log(cli.flags);
+  surify.setSID(cli.flags.sid);
 
-  let rules = await surify.readTemplate("suricata");
-  let newRules = surify.setVars(rules, vars, cli.flags.sid);
-
+  let newRules = [];
+  for (let template in surify.getTemplates()) {
+    let rules = await surify.readTemplate(template);
+    newRules.push(surify.setVars(rules, vars, surify.getSID()));
+  }
   if (cli.flags.output.toLowerCase() === "log") {
-    console.log(newRules.rules.join("\n"));
+    console.log(surify.writeRules(newRules));
   } else {
-    surify.writeRules(newRules, cli.flags.output);
+    console.log(surify.writeRules(newRules, cli.flags.output));
   }
 };
 
@@ -120,7 +122,7 @@ Set all test1 to "1.2.3.4" and test2 to "9.9.9.9" and start ruleset with sid 120
 
 $ surify -c config.json --json example.json -o suri.rules
 
-$ surify c config.json --csv example.csv -d ";" -o suri_csv.rules --sid 1
+$ surify -c config.json --csv example.csv -d ";" -o suri_csv.rules --sid 1234
 
 `,
   {

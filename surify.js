@@ -12,6 +12,19 @@ const setConfig = sett => {
   config = sett;
 };
 
+let recentSID;
+const getSID = () => {
+  return recentSID;
+}
+
+const setSID = (sid) => {
+  recentSID = sid;
+}
+
+const getTemplates = () => {
+  return config.template;
+}
+
 const readTemplate = async template => {
   let templatePath = path.join(getDir(), config.template[template].path);
 
@@ -27,9 +40,9 @@ const readTemplate = async template => {
 
 const setVars = (rules, varArray, sid) => {
   if (Number.isSafeInteger(+sid)) {
-    sid = +sid;
+    recentSID = +sid;
   } else if (sid) {
-    sid = 1;
+    recentSID = 1;
   }
   let replacedRules = { rules: [], template: rules.template };
   if (!Array.isArray(varArray)) varArray = [varArray];
@@ -50,35 +63,41 @@ const setVars = (rules, varArray, sid) => {
       if (sid) {
         let sidMatch = rule.match(/sid:\ ?\d+;?/);
         if (sidMatch) {
-          rule = rule.replace(/sid:\ ?\d+;?/, `sid: ${sid};`);
+          rule = rule.replace(/sid:\ ?\d+;?/, `sid: ${recentSID};`);
         } else {
              let lastIx = rule.lastIndexOf(")");
              let appendSemicolon = !rule.slice(0, lastIx).endsWith(";");
-             let newRule = `${rule.slice(0, lastIx)}${appendSemicolon ? ";" : ""} sid: ${sid};${rule.slice(lastIx)}`
+             let newRule = `${rule.slice(0, lastIx)}${appendSemicolon ? ";" : ""} sid: ${recentSID};${rule.slice(lastIx)}`
              rule = newRule;
         }
       }
       replacedRules.rules.push(rule);
-      sid++;
+      if(sid) {
+        recentSID++;
+      }
     }
   }
   return replacedRules;
 };
 
 const writeRules = (rules, filename) => {
+  let data = rules
+  .map(entry => entry.rules.join("\n"))
+  .join("\n");
   if (filename) {
-    fs.writeFile(filename, rules.rules.join("\n"), err => {
-      return err;
-    });
+    fs.writeFileSync(filename, data);
     return `✅ File ${filename} written.`;
   } else {
-    return rules.rules.join("\n");
+    return data;
   }
 };
 
 module.exports = {
+  getSID,
+  setSID,
   setConfig,
   setVars,
+  getTemplates,
   readTemplate,
   writeRules
 };
