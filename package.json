@@ -9,5 +9,12 @@
   },
   "preferGlobal": true,
   "bin": "./main.js",
-  "repository": "github:dgenzer/surify-cli"
+  "repository": "github:dgenzer/surify-cli",
+  "keywords": [
+    "suricata",
+    "ids",
+    "rules",
+    "generator",
+    "template"
+  ]
 }
