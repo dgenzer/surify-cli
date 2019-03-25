@@ -21,6 +21,7 @@ No configuration file!
 Set with flag -c <file>
            or --config <file>
       `);
+      process.exit();
     }
   }
 
@@ -33,6 +34,7 @@ Set with flag -c <file>
         console.error(`
 File ${cli.flags.json} is not a valid JSON.
       `);
+      process.exit();
       }
     } else {
       try {
@@ -41,6 +43,7 @@ File ${cli.flags.json} is not a valid JSON.
         console.error(`
 STDIN is not a valid JSON.
       `);
+      process.exit();
       }
     }
   } else if (cli.flags.hasOwnProperty("jsonl")) {

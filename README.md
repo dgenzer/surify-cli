@@ -50,3 +50,4 @@ alert http {{test2}} any -> {{test}} any (msg: "Test 2"; sid: 2;)
 - [ ] conditions in **config.json**
   - [ ] Example in wiki
 - [ ] **surify.js** as a standalone package
+- [ ] autodetect inputtype
