@@ -1,2 +1,0 @@
-alert http {{test}} any -> {{test2}} any (msg: "{{match}}"; sid: 1;)
-alert http {{test2}} any -> {{test}} any (msg: "Test 2"; sid: 2;)

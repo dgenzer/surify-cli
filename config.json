@@ -1,9 +1,25 @@
 {
-    "template": {
-        "suricata": {
-            "path": "./suricata.template",
-            "startVar": "{{",
-            "endVar": "}}"
-        }
+  "template": {
+    "suricata": {
+      "path": "./templates/suricata.template",
+      "startVar": "{{",
+      "endVar": "}}"
+    },
+    "hosts": {
+      "conditions": {
+        "type": "Host"
+      },
+      "path": "./templates//hosts.template",
+      "startVar": "{{",
+      "endVar": "}}"
+    },
+    "urls": {
+      "conditions": {
+        "type": "URL"
+      },
+      "path": "./templates//url.template",
+      "startVar": "{{",
+      "endVar": "}}"
     }
+  }
 }

@@ -32,9 +32,12 @@ const readTemplate = async template => {
   let templates = Buffer.from(buffer).toString();
   let rules = templates.split("\n");
 
+  let conditions = config.template[template].conditions || false;
+
   return {
     rules,
-    template
+    template,
+    conditions
   };
 };
 
@@ -48,6 +51,17 @@ const setVars = (rules, varArray, sid) => {
   if (!Array.isArray(varArray)) varArray = [varArray];
 
   for (let vars of varArray) {
+    if(rules.conditions && JSON.stringify(rules.conditions).length > 0) {
+      let allConditionsTrue = 0;
+      for(let condition of Object.entries(rules.conditions)) {
+        if(vars[condition[0]] == condition[1]) {
+          allConditionsTrue++;
+        } 
+      }
+      if(Object.keys(rules.conditions).length !== allConditionsTrue) {
+        continue;
+      } 
+    }
     for (let rule of rules.rules) {
       for (let variable in vars) {
         let regx = new RegExp(
