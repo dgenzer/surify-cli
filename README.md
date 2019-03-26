@@ -27,7 +27,7 @@ Generate suricata-rules from collection of IOCs (JSON, CSV or flags) based on yo
 
 ## Examples
 
-An example `config.json` and some templates `./templates/*` are available. Further example are available [here](https://github.com/dgenzer/surify-cli/wiki/Examples).
+An example `config.json` and some templates `./templates/*` are available. Further examples are available [here](https://github.com/dgenzer/surify-cli/wiki/Examples).
 
 ## ToDo
 - [ ] Tests
