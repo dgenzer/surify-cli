@@ -22,17 +22,17 @@ const setSID = (sid) => {
 }
 
 const getTemplates = () => {
-  return config.template;
+  return config.templates;
 }
 
 const readTemplate = async template => {
-  let templatePath = path.join(getDir(), config.template[template].path);
+  let templatePath = path.join(getDir(), config.templates[template].path);
 
   let buffer = await fs.readFileSync(templatePath);
   let templates = Buffer.from(buffer).toString();
   let rules = templates.split("\n");
 
-  let conditions = config.template[template].conditions || false;
+  let conditions = config.templates[template].conditions || false;
 
   return {
     rules,
@@ -65,11 +65,9 @@ const setVars = (rules, varArray, sid) => {
     for (let rule of rules.rules) {
       for (let variable in vars) {
         let regx = new RegExp(
-          `${config.template[rules.template].startVar}${variable}${
-            config.template[rules.template].endVar
-          }`.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&"),
+          `${config.startVar}${variable}${config.endVar}`.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&"),
           "g"
-        );
+          );
         for (let match in rule.match(regx)) {
           rule = rule.replace(regx, vars[variable]);
         }
