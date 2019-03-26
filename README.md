@@ -26,24 +26,8 @@ Generate suricata-rules from collection of IOCs (JSON, CSV or flags) based on yo
   - `... -o suri.rules`
 
 ## Examples
-### config.json
-```JSON
-{
-    "template": {
-        "suricata": {
-            "path": "./suricata.template",
-            "startVar": "{{",
-            "endVar": "}}"
-        }
-    }
-}
-```
 
-### suricata.template
-```suricata
-alert http {{test}} any -> {{test2}} any (msg: "Test 1"; sid: 1;)
-alert http {{test2}} any -> {{test}} any (msg: "Test 2"; sid: 2;)
-```
+An example `config.json` and some templates `./templates/*` are available. Further example are available [here](https://github.com/dgenzer/surify-cli/wiki/Examples).
 
 ## ToDo
 - [ ] Tests
