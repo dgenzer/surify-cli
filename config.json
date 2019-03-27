@@ -3,19 +3,19 @@
   "endVar": "}}",
   "templates": {
     "suricata": {
-      "path": "./templates/suricata.template"
+      "path": "./templates/suricata.template.rules"
     },
     "hosts": {
       "conditions": {
         "type": "Host"
       },
-      "path": "./templates/hosts.template"
+      "path": "./templates/hosts.template.rules"
     },
     "urls": {
       "conditions": {
         "type": "URL"
       },
-      "path": "./templates/url.template"
+      "path": "./templates/url.template.rules"
     }
   }
 }
