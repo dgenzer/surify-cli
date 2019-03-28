@@ -30,14 +30,15 @@ const readTemplate = async template => {
 
   let buffer = await fs.readFileSync(templatePath);
   let templates = Buffer.from(buffer).toString();
-  let rules = templates.split("\n");
+  let rules = templates.split("\n").filter(rule => rule.length > 0);
 
   let conditions = config.templates[template].conditions || false;
 
   return {
     rules,
     template,
-    conditions
+    conditions,
+    templatePath
   };
 };
 
@@ -63,6 +64,15 @@ const setVars = (rules, varArray, sid) => {
       } 
     }
     for (let rule of rules.rules) {
+      
+      let quickCheckRule = rule.match(/^(?<action>[^\s]+)\s+(?<proto>[^\s]+)\s+(?<srcip>[^\s]+)\s+(?<srcport>[^\s]+)\s+(?<direction>[\-\>|\<\>]{2})\s+(?<dstip>[^\s]+)\s+(?<dstport>[^\s]+)\s+(?<options>\(.*\))/);
+
+      if(quickCheckRule && quickCheckRule[0] !== rule.trim()) {
+        console.error(`${rules.templatePath}:${rules.rules.indexOf(rule)+1}`);
+        console.error(`\t${rule.trim()}`);
+        process.exit(0);
+      }
+
       for (let variable in vars) {
         let regx = new RegExp(
           `${config.startVar}${variable}${config.endVar}`.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&"),
