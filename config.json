@@ -2,8 +2,11 @@
   "startVar": "{{",
   "endVar": "}}",
   "templates": {
-    "suricata": {
-      "path": "./templates/suricata.template.rules"
+    "ip": {
+      "conditions": {
+        "type": "IP"
+      },
+      "path": "./templates/ip.template.rules"
     },
     "hosts": {
       "conditions": {
@@ -11,11 +14,11 @@
       },
       "path": "./templates/hosts.template.rules"
     },
-    "urls": {
+    "file": {
       "conditions": {
-        "type": "URL"
+        "type": "File"
       },
-      "path": "./templates/url.template.rules"
+      "path": "./templates/file.template.rules"
     }
   }
 }

@@ -1,1 +1,0 @@
-alert http any any -> any any (msg: "URL {{match}}"; sid: 5;)

@@ -1,0 +1,2 @@
+alert ip $HOME_NET any -> {{match}} any (msg: "Outgoing traffic to IP {{match}}"; classtype: targeted-activity; metadata: generator surify; sid: 1; rev: 1; reference: url, {{file}};)
+alert ip {{match}} any -> $HOME_NET any (msg: "Incoming traffic from IP {{match}}"; classtype: targeted-activity; metadata: generator surify; sid: 1; rev: 1; reference: url, {{file}};)
